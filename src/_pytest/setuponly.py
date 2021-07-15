@@ -64,7 +64,7 @@ def _show_fixture_action(fixturedef: FixtureDef[object], msg: str) -> None:
 
     tw = config.get_terminal_writer()
     tw.line()
-    tw.write(" " * 2 * fixturedef.scopenum)
+    tw.write(" " * 2 * fixturedef._scope.index())
     tw.write(
         "{step} {scope} {fixture}".format(
             step=msg.ljust(8),  # align the output to TEARDOWN

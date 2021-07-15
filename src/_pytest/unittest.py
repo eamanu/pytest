@@ -4,6 +4,7 @@ import traceback
 import types
 from typing import Any
 from typing import Callable
+from typing import cast
 from typing import Generator
 from typing import Iterable
 from typing import List
@@ -29,12 +30,12 @@ from _pytest.python import Class
 from _pytest.python import Function
 from _pytest.python import PyCollector
 from _pytest.runner import CallInfo
+from _pytest.scope import Scope
 
 if TYPE_CHECKING:
     import unittest
     import twisted.trial.unittest
-
-    from _pytest.fixtures import _Scope
+    from _pytest.scope import _ScopeName
 
     _SysExcInfoType = Union[
         Tuple[Type[BaseException], BaseException, types.TracebackType],
@@ -102,7 +103,7 @@ class UnitTestCase(Class):
             "setUpClass",
             "tearDownClass",
             "doClassCleanups",
-            scope="class",
+            scope=Scope.Class,
             pass_self=False,
         )
         if class_fixture:
@@ -113,7 +114,7 @@ class UnitTestCase(Class):
             "setup_method",
             "teardown_method",
             None,
-            scope="function",
+            scope=Scope.Function,
             pass_self=True,
         )
         if method_fixture:
@@ -125,7 +126,7 @@ def _make_xunit_fixture(
     setup_name: str,
     teardown_name: str,
     cleanup_name: Optional[str],
-    scope: "_Scope",
+    scope: Scope,
     pass_self: bool,
 ):
     setup = getattr(obj, setup_name, None)
@@ -140,8 +141,10 @@ def _make_xunit_fixture(
         def cleanup(*args):
             pass
 
+    scope_name = cast("_ScopeName", scope.value)
+
     @pytest.fixture(
-        scope=scope,
+        scope=scope_name,
         autouse=True,
         # Use a unique name to speed up lookup.
         name=f"_unittest_{setup_name}_fixture_{obj.__qualname__}",
