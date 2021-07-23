@@ -8,7 +8,6 @@ would cause circular references.
 Also this makes the module light to import, as it should.
 """
 from enum import Enum
-from functools import lru_cache
 from typing import Optional
 from typing import TYPE_CHECKING
 
@@ -29,7 +28,7 @@ class Scope(Enum):
 
     def index(self) -> int:
         """Return this scope index. Smaller numbers indicate higher scopes (Session = 0)."""
-        return _scope_to_index(self)
+        return _SCOPE_INDICES[self]
 
     def next(self) -> "Scope":
         """Return the next scope (from top to bottom)."""
@@ -70,9 +69,5 @@ _NEXT_SCOPES = {
     Scope.Class: Scope.Function,
 }
 
-
-@lru_cache(maxsize=None)
-def _scope_to_index(scope: Scope) -> int:
-    """Implementation of Scope.index() as a free function so we can cache it."""
-    scopes = list(Scope)
-    return scopes.index(scope)
+# Maps a scope to its internal index, with Session = 0, Package = 1, and so on.
+_SCOPE_INDICES = {s: i for i, s in enumerate(Scope)}
