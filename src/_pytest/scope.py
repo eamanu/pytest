@@ -33,7 +33,7 @@ class Scope(Enum):
 
     def next(self) -> "Scope":
         """Return the next scope (from top to bottom)."""
-        return _next_scope(self)
+        return _NEXT_SCOPES[self]
 
     @classmethod
     def from_user(
@@ -61,19 +61,18 @@ class Scope(Enum):
 # Ordered list of scopes which can contain many tests (in practice all except Function).
 HIGH_SCOPES = [x for x in Scope if x is not Scope.Function]
 
+# Maps a high-level scope to its next scope. Function is absent here because it
+# is the bottom-most scope.
+_NEXT_SCOPES = {
+    Scope.Session: Scope.Package,
+    Scope.Package: Scope.Module,
+    Scope.Module: Scope.Class,
+    Scope.Class: Scope.Function,
+}
+
 
 @lru_cache(maxsize=None)
 def _scope_to_index(scope: Scope) -> int:
     """Implementation of Scope.index() as a free function so we can cache it."""
     scopes = list(Scope)
     return scopes.index(scope)
-
-
-@lru_cache(maxsize=None)
-def _next_scope(scope: Scope) -> Scope:
-    """Implementation of Scope.next() as a free function so we can cache it."""
-    if scope is Scope.Function:
-        raise ValueError("Function is the bottom scope")
-    scopes = list(Scope)
-    index = scopes.index(scope)
-    return scopes[index + 1]

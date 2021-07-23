@@ -451,7 +451,7 @@ class FixtureRequest:
 
     @property
     def scope(self) -> "_ScopeName":
-        """Backward-compatibility to return the scope string value."""
+        """Scope string, one of "function", "class", "module", "package", "session"."""
         return self._scope.value  # type:ignore[return-value]
 
     @property
@@ -1013,7 +1013,7 @@ class FixtureDef(Generic[FixtureValue]):
 
     @property
     def scope(self) -> "_ScopeName":
-        """Backward-compatibility to return the scope string value."""
+        """Scope string, one of "function", "class", "module", "package", "session"."""
         return self._scope.value  # type:ignore[return-value]
 
     def addfinalizer(self, finalizer: Callable[[], object]) -> None:

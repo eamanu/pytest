@@ -18,7 +18,7 @@ def test_next() -> None:
     assert Scope.Module.next() is Scope.Class
     assert Scope.Class.next() is Scope.Function
 
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         Scope.Function.next()
 
 
