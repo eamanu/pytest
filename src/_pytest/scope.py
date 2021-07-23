@@ -1,7 +1,7 @@
 """
 Scope definition and related utilities.
 
-Those are defined here, instead of in the 'fixtures', module because
+Those are defined here, instead of in the 'fixtures' module because
 their use is spread across many other pytest modules, and centralizing it in 'fixtures'
 would cause circular references.
 
